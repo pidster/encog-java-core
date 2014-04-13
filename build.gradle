@@ -1,7 +1,9 @@
+apply plugin: 'build-dashboard'
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'jacoco'
 
 sourceCompatibility=1.6
 targetCompatibility=1.6
@@ -28,14 +30,33 @@ dependencies {
     deployerJars 'org.apache.maven.wagon:wagon-ssh:2.1'
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
+task sourcesJar(type: Jar, dependsOn: [ 'classes' ]) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn:javadoc) {
+task javadocJar(type: Jar, dependsOn: [ 'javadoc' ]) {
 	classifier = 'javadoc'
 	from javadoc.destinationDir
+}
+
+// configure the build dashboard to run the build task
+// buildDashboard.finalizedBy build
+build.mustRunAfter buildDashboard
+
+// always trigger the JaCoCo test report on full checks, but not the test task
+check.finalizedBy jacocoTestReport
+
+// Announce the test results pages
+test.doLast {
+    println "Unit Test Results Report: ${reports.html.destination}/index.html"
+}
+jacocoTestReport.doLast {
+    println "JaCoCo Coverage Report  : ${reports.html.destination}/index.html"
+}
+
+build.doLast {
+    println "Build Dashboard: ${buildDashboard.reports.html.destination}/index.html"
 }
 
 artifacts {
