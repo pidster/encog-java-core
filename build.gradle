@@ -4,6 +4,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
+apply plugin: 'sonar-runner'
 
 sourceCompatibility=1.6
 targetCompatibility=1.6
@@ -62,6 +63,20 @@ build.doLast {
 artifacts {
 	archives sourcesJar
 	archives javadocJar
+}
+
+sonarRunner {
+    sonarProperties {
+        // property "sonar.host.url", "${sonarHostUrl}"
+        // property "sonar.jdbc.url", "${sonarJdbcUrl}"
+        // property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        // property "sonar.jdbc.username", "${sonarJdbcUsername}"
+        // property "sonar.jdbc.password", "${sonarJdbcPassword}"
+        property "sonar.junit.reportsPath", "build/test-results"
+        property "sonar.jacoco.reportPath", "build/jacoco/test.exec"
+        property "sonar.jacoco.itReportPath", "build/jacoco/integTest.exec"
+        // property 'sonar.tests', 'src/test/java'
+    }
 }
 
 uploadArchives {
